@@ -1,2 +1,2 @@
 Filesystem     1K-blocks   Used Available Use% Mounted on
-/dev/nvme0n1p9  59912620 450792  59461828   1% /mnt/xfs
+/dev/nvme0n1p9  59912620 450824  59461796   1% /mnt/xfs

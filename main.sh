@@ -7,6 +7,7 @@ MERGED="${XFS_PATH}/merged"
 
 
 function dump() {
+  sync -f "${XFS_PATH}"
   df "${XFS_PATH}" > "df${1}"
   stat -f "${XFS_PATH}" > "stat${1}"
 }
