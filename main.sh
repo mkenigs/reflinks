@@ -3,6 +3,7 @@
 XFS_PATH=/mnt/xfs
 RPMS="${XFS_PATH}/rpms"
 REFLINKS="${XFS_PATH}/reflinks"
+MERGED="${XFS_PATH}/merged"
 
 
 function dump() {
@@ -10,13 +11,13 @@ function dump() {
   stat -f "${XFS_PATH}" > "stat${1}"
 }
 
-rm -rf ${XFS_PATH}/*
+readarray -t PKGS < <(dnf repoquery --requires --resolve nginx)
+rm -rf "${XFS_PATH}"/*
 mkdir "${RPMS}"
 mkdir "${REFLINKS}"
 dump 1
 
 # install
-readarray -t PKGS < <(dnf repoquery --requires --resolve nginx)
 for pkg in "${PKGS[@]}"; do
     rpm -i --nodeps --root "${RPMS}/${pkg}" $(dnf repoquery --location "${pkg}")
 done
@@ -27,3 +28,9 @@ for pkg in "${PKGS[@]}"; do
   cp -r --reflink "${RPMS}/${pkg}" "${REFLINKS}/${pkg}"
 done
 dump 3
+
+# merge
+for pkg in "${PKGS[@]}"; do
+  rsync -a "${REFLINKS}/${pkg}/" "${MERGED}" --link-dest="${REFLINKS}/${pkg}"
+done
+dump 4
